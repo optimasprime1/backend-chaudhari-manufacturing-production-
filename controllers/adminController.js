@@ -1,7 +1,7 @@
 const ActivityLog = require("../models/ActivityLog");
 const Category = require("../models/Category");
 const Contact = require("../models/Contact");
-const Enquiry = require("../models/Enquiry");
+const Enquiry = require("../models/enquiry");
 const { getProductModel, getProductModels } = require("../models/Product");
 const QuoteRequest = require("../models/QuoteRequest");
 const { asyncHandler } = require("../middleware/error");
