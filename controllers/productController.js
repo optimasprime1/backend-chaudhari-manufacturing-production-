@@ -156,10 +156,53 @@ async function productPayload(body, existing = {}) {
     throw new AppError("A product name and valid categoryId are required.", 400);
   }
 
+  const submittedPrice = body.price === undefined ? existing.price : body.price;
+  const priceIsUnset = submittedPrice === null ||
+    (typeof submittedPrice === "string" && submittedPrice.trim() === "");
+  const price = submittedPrice === undefined
+    ? undefined
+    : priceIsUnset
+      ? null
+      : Number(submittedPrice);
+  if (
+    price !== undefined &&
+    price !== null &&
+    (typeof submittedPrice !== "number" && typeof submittedPrice !== "string" ||
+      !Number.isFinite(price) ||
+      price < 0)
+  ) {
+    throw new AppError("Product price must be a non-negative number.", 400);
+  }
+
+  const optionalPriceFields = ["basePrice", "packingCharges", "transportCharges", "gstPercentage"];
+  const priceBreakdown = Object.fromEntries(optionalPriceFields.map((field) => {
+    const submittedValue = body[field] === undefined ? existing[field] : body[field];
+    if (submittedValue === undefined) return [field, undefined];
+    if (submittedValue === null || (typeof submittedValue === "string" && submittedValue.trim() === "")) {
+      return [field, null];
+    }
+
+    const value = Number(submittedValue);
+    if (
+      (typeof submittedValue !== "number" && typeof submittedValue !== "string") ||
+      !Number.isFinite(value) ||
+      value < 0 ||
+      (field === "gstPercentage" && value > 100)
+    ) {
+      throw new AppError(
+        `${field} must be a non-negative number${field === "gstPercentage" ? " no greater than 100" : ""}.`,
+        400,
+      );
+    }
+    return [field, value];
+  }));
+
   return {
     productId: body.productId ? slugify(body.productId) : existing.productId || `${slugify(name)}-${Date.now().toString(36).toUpperCase()}`,
     name: String(name).trim(),
     model: body.model ?? existing.model ?? "",
+    price,
+    ...priceBreakdown,
     average: body.average ?? existing.average ?? "",
     motor: body.motor ?? existing.motor ?? "",
     operation: body.operation ?? existing.operation ?? "",
