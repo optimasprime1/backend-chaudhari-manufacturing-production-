@@ -10,4 +10,4 @@ const enquirySchema = new mongoose.Schema({
   status: { type: String, enum: ['new', 'contacted', 'closed'], default: 'new' }
 }, { timestamps: true, versionKey: false });
 
-module.exports = mongoose.model('Enquiry', enquirySchema);
+module.exports = mongoose.models.Enquiry || mongoose.model('Enquiry', enquirySchema);
