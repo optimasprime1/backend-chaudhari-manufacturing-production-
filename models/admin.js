@@ -10,4 +10,4 @@ const adminSchema = new mongoose.Schema({
   passwordChangedAt: { type: Date, default: null }
 }, { timestamps: true, versionKey: false });
 
-module.exports = mongoose.model('Admin', adminSchema);
+module.exports = mongoose.models.Admin || mongoose.model('Admin', adminSchema);
