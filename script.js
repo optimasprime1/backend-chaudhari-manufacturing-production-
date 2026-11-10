@@ -130,7 +130,7 @@ function renderProductDetails(product) {
   productDialogContent.innerHTML = `
     <button class="product-dialog__close" type="button" data-close-product-dialog aria-label="Close product details">×</button>
     <h2 id="product-dialog-title">${escapeHtml(product.name)}</h2>
-    <p class="product-dialog__price"><strong>Price:</strong> ${escapeHtml(formatPrice(product.price))}</p>
+    <p class="product-dialog__price"><strong>Base price:</strong> ${escapeHtml(formatPrice(product.basePrice))}</p>
     ${specificationList}
     <p class="product-dialog__description">${escapeHtml(product.description)}</p>
     ${tags}
